@@ -1,0 +1,27 @@
+{
+  "name": "personal-restaurant-note",
+  "version": "1.0.0",
+  "description": "",
+  "main": "backend.ts",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "f": "cd frontend && npm run web",
+    "b": "cd backend && npm run dev",
+    "dev": "concurrently \"npm run frontend\" \"npm run backend\"",
+    "build": "cd backend && npm run build && cd ../frontend && npm run build"
+  },
+  "keywords": [
+    "notes",
+    "restaurant"
+  ],
+  "author": "seashell258",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "@types/react-native": "^0.73.0",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.5"
+  }
+}
