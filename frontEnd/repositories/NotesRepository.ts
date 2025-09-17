@@ -1,6 +1,6 @@
 // repositories/NotesRepository.ts
 import { v4 as uuidv4 } from 'uuid';
-import { databaseService } from '../services/DatabaseInit';
+import { databaseService } from '../services/DatabaseFactory';
 
 class NotesRepository {
   async create(noteData) {
