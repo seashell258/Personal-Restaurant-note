@@ -5,7 +5,7 @@ type FilterMenuProps = {
   onApply: (filter: { filterType: "distance" | "cuisine"; value: string }) => void;
 };
 
-export const FilterMenu: React.FC<FilterMenuProps> = ({ onApply }) => {
+export const NotesFilter: React.FC<FilterMenuProps> = ({ onApply }) => {
   const [mode, setMode] = useState<"distance" | "cuisine" | null>("distance");
   const [selectedValue, setSelectedValue] = useState<string | null>("500m");
 

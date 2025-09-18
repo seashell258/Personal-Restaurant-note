@@ -36,29 +36,29 @@ private async createTables(): Promise<void> {
   }
 }
 
-
 async addNote(note: Note): Promise<void> {
   if (!this.db) throw new Error('Database not initialized');
 
-  const sql = `
-    INSERT INTO notes (
-      id, restaurant_name, restaurant_address, restaurant_place_id,
-      dish_ordered, lat, lng, content, rating, created_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `;
+const sql = `
+  INSERT INTO notes (
+    id, cuisine, restaurant_name, restaurant_address, restaurant_place_id,
+    dish_ordered, lat, lng, content, rating, created_at
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+`;
 
-  const params = [
-    note.id,
-    note.restaurant_name,
-    note.restaurant_address,
-    note.restaurant_place_id,
-    note.dish_ordered,
-    note.lat,
-    note.lng,
-    note.content ?? null,
-    note.rating,
-    note.created_at,
-  ];
+const params = [
+  note.id,
+  note.cuisine ?? null,
+  note.restaurant_name,
+  note.restaurant_address,
+  note.restaurant_place_id,
+  note.dish_ordered ?? null,
+  note.lat,
+  note.lng,
+  note.content ?? null,
+  note.rating ?? null,
+  note.created_at,
+];
 
   try {
     const result = await this.db.runAsync(sql, params);
@@ -87,6 +87,7 @@ async getAllNotes(): Promise<Note[]> {
     this.db = null;
     console.log('Database closed (expo-sqlite does not really close connections)');
   }
+    
 }
 
 export const db = new DatabaseService();

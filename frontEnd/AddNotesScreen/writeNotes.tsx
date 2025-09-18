@@ -1,95 +1,93 @@
 import { useState } from "react";
-import { db } from '../services/DatabaseFactory';
+
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid'; // 用 uuid 生成 id
+import { Modal, TextInput, TouchableOpacity, View, Text } from "react-native";
+import { Button } from "react-native-paper";
+import { SelectRestaurant } from "./SelectRestaurant";
+import type { RestaurantRes, Note } from "../shared/types";
+import { db } from "../services/DatabaseFactory";
+export const WriteNotes = () => {
+  const [selectedRestaurant, setSelectedRestaurant] = useState<RestaurantRes | null>(null);
 
 
-interface WriteNotesProps {
-  restaurantName: string;
-  restaurantPlaceId: string;
-  restaurantAddress: string;
-  lat: number;
-  lng: number;
-}
-
-export const WriteNotes: React.FC<WriteNotesProps> = ({
-  restaurantName,
-  restaurantPlaceId,
-  restaurantAddress,
-  lat,
-  lng,
-}) => {
-  const [dishOrdered, setDishOrdered] = useState("");
+  const [dishOrdered, setDishOrdered] = useState("");  // 為了送出表單清空才用 usestate，調查發現 input頻繁刷新也沒啥效能損失。 trade off 小
   const [cuisine, setCuisine] = useState("");
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState<string>("");
   const [rating, setRating] = useState<number>(0);
+  const [showSearch, setShowSearch] = useState(false);
 
-const handleSubmit = async () => {
-  const newNote = {
-    id: crypto.randomUUID(),
-    cuisine: cuisine || null,
-    restaurant_name: restaurantName,
-    restaurant_place_id: restaurantPlaceId,
-    restaurant_address: restaurantAddress,
-    dish_ordered: dishOrdered || null,
-    lat,
-    lng,
-    content: content || null,
-    rating,
-    created_at: new Date().toISOString(),
+  const handleSaveNote = async () => {
+    if (!selectedRestaurant) { alert("請先選擇餐廳") }
+    const noteData: Note = {
+      id: uuidv4(),                       // UUID
+      cuisine: cuisine || null,           // optional
+      restaurant_name: selectedRestaurant.name,
+      restaurant_address: selectedRestaurant.address,
+      restaurant_place_id: selectedRestaurant.place_id,
+      dish_ordered: dishOrdered || null,  // optional
+      lat: selectedRestaurant.lat,
+      lng: selectedRestaurant.lng,
+      content: content || null,           // optional
+      rating: rating || null,             // optional
+      created_at: new Date().toISOString(),
+    };
+
+    console.log("組合好的 noteData:", noteData);
+
+    try {
+      await db.addNote(noteData);
+      // 清空表單
+      setDishOrdered("");
+      setCuisine("");
+      setContent("");
+      setRating(0);
+      console.log("筆記已儲存")
+    } catch (err) {
+      console.error(err);
+      alert("儲存失敗！");
+    }
   };
-
-  try {
-    await db.addNote(newNote); // await 確保資料寫入完成
-    alert("筆記已儲存！");
-    // 清空表單
-    setDishOrdered("");
-    setCuisine("");
-    setContent("");
-    setRating(0);
-  } catch (err) {
-    console.error(err);
-    alert("儲存失敗！");
-  }
-};
 
 
   return (
-    <div>
-      <h2>新增餐廳筆記</h2>
-      <div>
-        <label>菜色：</label>
-        <input
-          type="text"
-          value={dishOrdered}
-          onChange={(e) => setDishOrdered(e.target.value)}
-        />
-      </div>
-      <div>
-        <label>料理類別（可選）：</label>
-        <input
-          type="text"
-          value={cuisine}
-          onChange={(e) => setCuisine(e.target.value)}
-        />
-      </div>
-      <div>
-        <label>筆記內容（可選）：</label>
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
-      </div>
-      <div>
-        <label>評分：</label>
-        <input
-          type="number"
-          min={0}
-          max={5}
-          value={rating}
-          onChange={(e) => setRating(Number(e.target.value))}
-        />
-      </div>
-      <button onClick={handleSubmit}>儲存筆記</button>
-    </div>
+    <View style={{ flex: 1 }}>
+      <TouchableOpacity onPress={() => setShowSearch(true)}>
+        <Text>{selectedRestaurant ? selectedRestaurant.name : "選擇餐廳（點擊開啟搜尋）"}</Text>
+      </TouchableOpacity>
+
+      <Modal visible={showSearch} animationType="slide">
+        <View style={{ flex: 1 }}>
+          <SelectRestaurant
+            onSelectRestaurant={(res) => {
+              setSelectedRestaurant(res);
+              setShowSearch(false); // 選完自動關閉
+            }}
+          />
+          <Button onPress={() => setShowSearch(false)}>取消</Button>
+        </View>
+      </Modal>
+      <TextInput
+        placeholder="描述食物..."
+        value={content}
+        onChangeText={setContent}
+        style={{ borderBottomWidth: 1, marginVertical: 12 }}
+      />
+      <TextInput
+        placeholder="輸入點的菜..."
+        value={dishOrdered}
+        onChangeText={setDishOrdered}
+        style={{ borderBottomWidth: 1, marginVertical: 12 }}
+      />
+
+      <Button mode='contained' onPress={handleSaveNote}>
+        儲存筆記
+      </Button>
+    </View>
   );
 
 }
+
+
+
+

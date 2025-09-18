@@ -3,11 +3,12 @@ import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { ViewNotesScreen } from './ViewNotesScreen/viewNotesScreen';
-import { addNotesScreen } from './AddNotesScreen/addNotesScreen';
+
 import { globalStyles } from './shared/globalStyles';
 import { db } from './services/DatabaseFactory';
 import { useEffect } from 'react';
+import { AddNotesScreen } from './AddNotesScreen/AddNotesScreen';
+import { ViewNotesScreen } from './ViewNotesScreen/ViewNotesScreen';
 
 // 建立 Tab Navigator
 const Tab = createBottomTabNavigator();
@@ -35,8 +36,8 @@ export default function App() {
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <NavigationContainer>
         <Tab.Navigator screenOptions={{ headerShown: false }}>
-          <Tab.Screen name="檢視筆記" component={ViewNotesScreen} />
-          <Tab.Screen name="新增筆記" component={addNotesScreen} />
+         <Tab.Screen name="檢視筆記" component={ViewNotesScreen} />
+          <Tab.Screen name="新增筆記" component={AddNotesScreen} />
         </Tab.Navigator>
       </NavigationContainer>
     </SafeAreaView>

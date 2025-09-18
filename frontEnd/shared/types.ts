@@ -12,3 +12,11 @@ export interface Note {
   rating?: number | null;
   created_at: string;              // 程式自動生成
 }
+
+export interface RestaurantRes {
+    place_id: string;
+    name: string;
+    address: string;
+    lat: number;
+    lng: number;
+}

@@ -13,12 +13,16 @@ export const searchRestaurants = async (req: Request, res: Response) => {
             {
                 "place_id": "ChIJN1t_tDeuEmsRUsoyG83frY4",
                 "name": "Example Restaurant",
-                "address": "123 Main St, City, Country"
+                "address": "123 Main St, City, Country",
+                "lat":1515,
+                "lng":15156
             },
             {
                 "place_id": "ChIJLfySpTOuEmsRsc_JfJtljdc",
                 "name": "Another Restaurant",
-                "address": "456 Another St, City, Country"
+                "address": "456 Another St, City, Country",
+                "lat":15455415,
+                "lng":777151445456
             }
         ]
 
@@ -28,7 +32,9 @@ export const searchRestaurants = async (req: Request, res: Response) => {
         const results = TestData.map((item: any) => ({
             place_id: item.place_id,
             name: item.name,
-            address: item.formatted_address,
+            address: item.address,
+            lat:item.lat,
+            lng:item.lng
         }));  // placeid 經緯度 不用顯示 但我也要回傳給前端。 它自己append到筆記裡面存起來
 
         res.json(results);

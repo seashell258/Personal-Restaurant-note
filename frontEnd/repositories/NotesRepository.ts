@@ -1,4 +1,6 @@
 // repositories/NotesRepository.ts
+
+/* 
 import { v4 as uuidv4 } from 'uuid';
 import { databaseService } from '../services/DatabaseFactory';
 
@@ -151,4 +153,4 @@ class NotesRepository {
   }
 }
 
-export const notesRepository = new NotesRepository();
+export const notesRepository = new NotesRepository();*/
