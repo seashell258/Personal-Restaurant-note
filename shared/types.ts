@@ -11,6 +11,7 @@ export interface Note {
   content?: string | null;
   rating?: number | null;
   created_at: string;              // 程式自動生成
+  updated_at: string;              // 程式自動生成，新增的時候，預設跟 createdAt 一樣。
 }
 
 export interface RestaurantRes {

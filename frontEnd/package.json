@@ -6,9 +6,10 @@
     "build": "expo build:web"
   },
   "dependencies": {
-    "expo": "^54.0.8",
     "@react-navigation/bottom-tabs": "^7.4.7",
     "@react-navigation/native": "^7.1.17",
+    "eventemitter3": "^5.0.1",
+    "expo": "^54.0.8",
     "expo-sqlite": "~16.0.8",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

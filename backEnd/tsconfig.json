@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "ESNext",
+    "module": "nodenext",  //原本是esNext
+    "moduleResolution": "nodenext", //原本沒這行
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -9,7 +10,8 @@
     "outDir": "./dist"
   },
   "include": [
-    "**/*.ts"
+    "**/*.ts",
+    "../shares/**/*.ts"
   ],
   "exclude": [
     "node_modules",

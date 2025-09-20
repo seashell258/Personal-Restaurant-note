@@ -1,60 +1,74 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import 'react-native-get-random-values';
-import { v4 as uuidv4 } from 'uuid'; // 用 uuid 生成 id
 import { Modal, TextInput, TouchableOpacity, View, Text } from "react-native";
 import { Button } from "react-native-paper";
-import { SelectRestaurant } from "./SelectRestaurant";
+import { SelectRestaurant } from "../AddNotesScreen/SelectRestaurant";
 import type { RestaurantRes, Note } from "../../shared/types";
 import { db } from "../services/DatabaseFactory";
 import eventBus from "../services/events";
 
+interface Editnotes {
+  note: Note
+  onClose: () => void;
+}
 
-
-export const WriteNotes = () => {
+export const EditNote: React.FC<Editnotes> = ({ note, onClose }) => {
   const [selectedRestaurant, setSelectedRestaurant] = useState<RestaurantRes | null>(null);
-
-
-  const [dishOrdered, setDishOrdered] = useState("");  // 為了送出表單清空才用 usestate，調查發現 input頻繁刷新也沒啥效能損失。 trade off 小
+  const [dishOrdered, setDishOrdered] = useState("");
   const [cuisine, setCuisine] = useState("");
   const [content, setContent] = useState<string>("");
   const [rating, setRating] = useState<number>(0);
   const [showSearch, setShowSearch] = useState(false);
 
-  const handleSaveNote = async () => {
-    if (!selectedRestaurant) { alert("請先選擇餐廳") }
-    const noteData: Note = {
-      id: uuidv4(),                       // UUID
-      cuisine: cuisine || null,           // optional
+  // 初始化欄位
+  useEffect(() => {
+    if (note) {
+      setSelectedRestaurant({
+        name: note.restaurant_name,
+        address: note.restaurant_address,
+        place_id: note.restaurant_place_id,
+        lat: note.lat,
+        lng: note.lng,
+      });
+      setDishOrdered(note.dish_ordered || "");
+      setCuisine(note.cuisine || "");
+      setContent(note.content || "");
+      setRating(note.rating || 0);
+    }
+  }, [note]);
+
+  const handleUpdateNote = async () => {
+    if (!selectedRestaurant) {
+      alert("請先選擇餐廳");
+      return;
+    }
+
+    const updatedNote: Note = {
+      ...note,                        // 保留原 id 和 created_at
+      cuisine: cuisine || null,
       restaurant_name: selectedRestaurant.name,
       restaurant_address: selectedRestaurant.address,
       restaurant_place_id: selectedRestaurant.place_id,
-      dish_ordered: dishOrdered || null,  // optional
+      dish_ordered: dishOrdered || null,
       lat: selectedRestaurant.lat,
       lng: selectedRestaurant.lng,
-      content: content || null,           // optional
-      rating: rating || null,             // optional
-      created_at: new Date().toISOString(),
-      updated_at:new Date().toISOString()
+      content: content || null,
+      rating: rating || null,
+      // 如果要記錄編輯時間，可以加一個 updated_at
+      updated_at: new Date().toISOString(),
     };
 
-    console.log("組合好的 noteData:", noteData);
-
     try {
-      await db.addNote(noteData);
-      eventBus.emit('notesChanged','by db.addnNote in WriteNotes'); //透過event讓 view notes 組件知道要從資料庫取得最新資料
-      // 清空表單
-      setDishOrdered("");
-      setCuisine("");
-      setContent("");
-      setRating(0);
-      console.log("筆記已儲存")
+      await db.updateNote(updatedNote);
+      onClose()
+      eventBus.emit('notesChanged', 'by db.updateNote in EditNote');
+      console.log("筆記已更新");
     } catch (err) {
       console.error(err);
-      alert("儲存失敗！");
+      alert("更新失敗！");
     }
   };
-
 
   return (
     <View style={{ flex: 1 }}>
@@ -67,12 +81,13 @@ export const WriteNotes = () => {
           <SelectRestaurant
             onSelectRestaurant={(res) => {
               setSelectedRestaurant(res);
-              setShowSearch(false); // 選完自動關閉
+              setShowSearch(false);
             }}
           />
           <Button onPress={() => setShowSearch(false)}>取消</Button>
         </View>
       </Modal>
+
       <TextInput
         placeholder="描述食物..."
         value={content}
@@ -86,14 +101,14 @@ export const WriteNotes = () => {
         style={{ borderBottomWidth: 1, marginVertical: 12 }}
       />
 
-      <Button mode='contained' onPress={handleSaveNote}>
-        儲存筆記
+      <Button mode='contained' onPress={onClose}>
+        取消
       </Button>
+      
+      <Button mode='contained' onPress={handleUpdateNote}>
+        更新筆記
+      </Button>
+
     </View>
   );
-
-}
-
-
-
-
+};

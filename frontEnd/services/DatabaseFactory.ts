@@ -1,6 +1,6 @@
 import * as SQLite from 'expo-sqlite';
-import type { Note } from '../shared/types';
-
+import type { Note,RestaurantRes } from '../../shared/types';
+/*本地sqlite操作，所以這檔案在前端。並且因為在前端，即使使用了zod檢查，也能被繞過。 */
 class DatabaseService {
   private db: SQLite.SQLiteDatabase | null = null;
 
@@ -9,6 +9,7 @@ class DatabaseService {
     await this.createTables();
     console.log('Database initialized successfully');
   }
+  //#region createTables
 private async createTables(): Promise<void> {
   if (!this.db) throw new Error('Database not initialized');
 
@@ -35,9 +36,12 @@ private async createTables(): Promise<void> {
     throw err;
   }
 }
-
+//#endregion
+//#region addNote
 async addNote(note: Note): Promise<void> {
   if (!this.db) throw new Error('Database not initialized');
+
+  
 
 const sql = `
   INSERT INTO notes (
@@ -68,6 +72,98 @@ const params = [
     throw err;
   }
 }
+//#endregion
+async addNote(note: Note): Promise<void> {
+  if (!this.db) throw new Error('Database not initialized');
+
+  
+
+const sql = `
+  INSERT INTO notes (
+    id, cuisine, restaurant_name, restaurant_address, restaurant_place_id,
+    dish_ordered, lat, lng, content, rating, created_at
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+`;
+
+const params = [
+  note.id,
+  note.cuisine ?? null,
+  note.restaurant_name,
+  note.restaurant_address,
+  note.restaurant_place_id,
+  note.dish_ordered ?? null,
+  note.lat,
+  note.lng,
+  note.content ?? null,
+  note.rating ?? null,
+  note.created_at,
+];
+
+  try {
+    const result = await this.db.runAsync(sql, params);
+    // result.lastInsertRowId / result.changes 可選擇使用
+  } catch (err) {
+    console.error('Failed to add note:', err);
+    throw err;
+  }
+}
+//#endregion
+//#region deleteNote
+async deleteNote(note: Note): Promise<void> {
+  if (!this.db) throw new Error('Database not initialized');
+
+  const sql = `DELETE FROM notes WHERE id = ?`;
+  const params = [note.id];
+
+  try {
+    const result = await this.db.runAsync(sql, params);
+     console.error('deleted. response result:', result);
+    // result.changes 可檢查是否真的刪到資料
+  } catch (err) {
+    console.error('Failed to delete note:', err);
+    throw err;
+  }
+}
+//#endregion
+
+//#region updateNote
+async updateNote(note: Note): Promise<void> {
+  if (!this.db) throw new Error('Database not initialized');
+
+  const sql = `
+    UPDATE notes
+    SET cuisine = ?, restaurant_name = ?, restaurant_address = ?, restaurant_place_id = ?,
+        dish_ordered = ?, lat = ?, lng = ?, content = ?, rating = ?, created_at = ?
+    WHERE id = ?
+  `;
+
+  const params = [
+    note.cuisine ?? null,
+    note.restaurant_name,
+    note.restaurant_address,
+    note.restaurant_place_id,
+    note.dish_ordered ?? null,
+    note.lat,
+    note.lng,
+    note.content ?? null,
+    note.rating ?? null,
+    note.created_at,
+    note.id,
+  ];
+
+  try {
+    const result = await this.db.runAsync(sql, params);
+    // result.changes 可檢查是否真的更新
+  } catch (err) {
+    console.error('Failed to update note:', err);
+    throw err;
+  }
+}
+//#endregion
+
+
+
+//#region  getAllNotes
 async getAllNotes(): Promise<Note[]> {
   if (!this.db) throw new Error('Database not initialized');
 
@@ -81,7 +177,8 @@ async getAllNotes(): Promise<Note[]> {
     console.error('Failed to fetch notes:', err);
     throw err;
   }
-}
+}//#endregion
+
 
   async close(): Promise<void> {
     this.db = null;

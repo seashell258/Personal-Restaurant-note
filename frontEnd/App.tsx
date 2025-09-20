@@ -4,11 +4,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import { globalStyles } from './shared/globalStyles';
+import { globalStyles } from '../shared/globalStyles';
 import { db } from './services/DatabaseFactory';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AddNotesScreen } from './AddNotesScreen/AddNotesScreen';
 import { ViewNotesScreen } from './ViewNotesScreen/ViewNotesScreen';
+import { Note } from '../shared/types';
 
 // 建立 Tab Navigator
 const Tab = createBottomTabNavigator();
@@ -16,6 +17,8 @@ const Tab = createBottomTabNavigator();
 
 // App 主結構
 export default function App() {
+
+
   const [initialized, setInitialized] = React.useState(false);
   useEffect(() => {
     (async () => {

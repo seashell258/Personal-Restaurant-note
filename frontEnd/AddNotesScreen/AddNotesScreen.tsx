@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { logToFileAndConsole } from "../shared/writeLog";
+import { logToFileAndConsole } from "../../shared/writeLog";
 import { Modal, TextInput, TouchableOpacity, View, Text } from "react-native";
-import type { RestaurantRes, Note } from "../shared/types";
+import type { RestaurantRes, Note } from "../../shared/types";
 import { WriteNotes } from "./WriteNotes";
 let userInput = {
     selectedRestaurant: null,

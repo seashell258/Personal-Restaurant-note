@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, TextInput, FlatList, Text, TouchableOpacity, ActivityIndicator, Modal } from 'react-native';
-import type { RestaurantRes } from "../shared/types";
+import type { RestaurantRes } from "../../shared/types";
 
 
 interface SearchBarProps {
