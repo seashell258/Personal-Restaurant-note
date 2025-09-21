@@ -7,7 +7,7 @@ import { Button } from "react-native-paper";
 import { SelectRestaurant } from "./SelectRestaurant";
 import type { RestaurantRes, Note } from "../../shared/types";
 import { db } from "../services/DatabaseFactory";
-import eventBus from "../services/events";
+
 
 
 
@@ -42,7 +42,7 @@ export const WriteNotes = () => {
 
     try {
       await db.addNote(noteData);
-      eventBus.emit('notesChanged','by db.addnNote in WriteNotes'); //透過event讓 view notes 組件知道要從資料庫取得最新資料
+     
       // 清空表單
       setDishOrdered("");
       setCuisine("");

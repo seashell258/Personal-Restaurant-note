@@ -5,7 +5,6 @@ import type { RestaurantRes } from "../../shared/types";
 
 interface SearchBarProps {
   onSelectRestaurant: (restaurant: RestaurantRes) => void;
-
 }
 
 export const SelectRestaurant: React.FC<SearchBarProps> = ({ onSelectRestaurant }) => {

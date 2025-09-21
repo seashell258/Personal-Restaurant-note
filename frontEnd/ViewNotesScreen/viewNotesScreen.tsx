@@ -84,10 +84,20 @@ export const ViewNotesScreen = () => {
 
   useEffect(() => {
     fetchNotes()
-    eventBus.on('notesChanged', fetchNotes);   // 訂閱事件
+    const handleAdd = (newNote) => setNotes(prev => [...prev, newNote]);
+    const handleUpdate = (updatedNote) => setNotes(prev => prev.map(n => n.id === updatedNote.id ? updatedNote : n));
+    const handleDelete = (id) => setNotes(prev => prev.filter(n => n.id !== id));
+
+    eventBus.on('noteAdded', handleAdd);
+    eventBus.on('noteUpdated', handleUpdate);
+    eventBus.on('noteDeleted', handleDelete);
+
 
     return () => {
-      eventBus.off('notesChanged', fetchNotes); // 離開組件取消訂閱
+      eventBus.off('noteAdded', handleAdd);
+      eventBus.off('noteUpdated', handleUpdate);
+      eventBus.off('noteDeleted', handleDelete);
+
     };
   }, []);
 

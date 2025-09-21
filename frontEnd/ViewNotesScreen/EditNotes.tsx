@@ -62,7 +62,7 @@ export const EditNote: React.FC<Editnotes> = ({ note, onClose }) => {
     try {
       await db.updateNote(updatedNote);
       onClose()
-      eventBus.emit('notesChanged', 'by db.updateNote in EditNote');
+      eventBus.emit('notesUpdated', 'by db.updateNote in EditNote');
       console.log("筆記已更新");
     } catch (err) {
       console.error(err);
